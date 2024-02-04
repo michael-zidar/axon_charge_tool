@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axon MCT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="
+    text-gray-900
+    tracking-wider
+    leading-normal
+    max-h-screen
+    ">
+    <div class="">
+        <header class="bg-white">
+            <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+                <div class="flex lg:flex-1">
+                    <a href="#" class="-m-1.5 p-1.5">Axon MCT Update Tool</a>
+                </div>
+
+                <div class="flex lg:flex-1 justify-end">
+                    <a href="https://my.axon.com/s/article/Master-Charge-Tool-Axon-Records?language=en_US" class="-m-1.5 p-1.5 mr-5">MCT Docs</a>
+                    <a href="https://github.com/michael-zidar/axon_charge_tool" class="-m-1.5 p-1.5">Git Repo</a>
+                </div>
+
+            </nav>
+        </header>
+
+        <div class="flex items-center justify-center mt-10" id="secSelectFile">
+            <div class="rounded-xl border bg-card text-card-foreground shadow w-[350px]" id="cardSelectFile">
+                <div class="flex flex-col space-y-1.5 p-6">
+                    <h3 class="font-semibold leading-none tracking-tight">File Selection</h3>
+                    <p class="text-sm text-muted-foreground">Select a CSV file you exported from Axon Records</p>
+                </div>
+                <div class="flex items-center p-6 pt-0">
+                    <div class="grid w-full max-w-sm items-center gap-1.5 cursor-pointer">
+                        <label for="csvFileInput"
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">Upload
+                            a CSV file</label>
+                        <input type="file"
+                            class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+                            id="csvFileInput" accept=".csv">
+                    </div>
+                </div>
+
+                <div class="flex items-center p-6 pt-0"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-10 hidden" id="secShowFile">
+        <div id="tileActions" class="">
+            <div class="flex items-center justify-between p-6">
+                <div>
+                    <button
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50  h-9 px-4 py-2 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground"
+                        onclick="addRow()">
+                        Add Row
+                    </button>
+                    <button
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50  h-9 px-4 py-2 bg-black text-white shadow hover:bg-primary/90"
+                        id="exportButton">
+                        Export
+                    </button>
+                </div>
+                <div>
+                    <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        id="labelStats">Count of Charges</p>
+                </div>
+                <div class="grid w-full max-w-sm items-center gap-1.5">
+                    <input type="text"
+                        class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                        placeholder="Search" id="inpSearch">
+                </div>
+            </div>
+        </div>
+
+        <div id="csv" class="pb-20">
+            <div class="overflow-auto">
+                <table class="min-w-full text-sm table-auto">
+                    <thead class="[&_tr]:border-b">
+                        <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                            </th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                External ID</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Section</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Description</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Short Description</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                NIBRS UCR Codes</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Source</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Valid From Time</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Valid To Time</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Severity</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Code</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Summary Code</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                CJIS Code</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Hierarchy Number</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                UCR</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Offense Categories</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                Charge Type</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                State Offense Code</th>
+                            <th
+                                class="h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]">
+                                NCIC Offense Codes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="[&_tr:last-child]:border-0">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const secSelectFile = document.getElementById('secSelectFile');
+        const secShowFile = document.getElementById('secShowFile');
+        const csvFileInput = document.getElementById('csvFileInput');
+        csvFileInput.addEventListener('change', readSingleFile, false);
+
+        const inpSearch = document.getElementById('inpSearch');
+
+        let currentIDs = [];
+        const exportButton = document.getElementById('exportButton');
+        const labelStats = document.getElementById('labelStats');
+
+        function exportFile() {
+            let rows = document.querySelectorAll('table tr');
+            let csv = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = [],
+                    cols = rows[i].querySelectorAll('td, th');
+                
+                if(i === 0){
+                    // add the headers to the csv from the headers array
+                    const headerRowData = "externalId,section,description,shortDescription,nibrsUCRCodes,source,validFromTime,validToTime,severity,code,summaryCode,cjisCode,hierarchyNumber,UCR,offenseCategories,chargeType,stateOffenseCode,NCICOffenseCodes"
+                    csv.push(headerRowData);
+                    continue;
+                }
+
+                for (let j = 1; j < cols.length; j++) {
+                    row.push(cols[j].innerText);
+                }
+                csv.push(row.join(','));
+            }
+            csv = csv.join('\n');
+
+            let csvData = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            let csvURL = window.URL.createObjectURL(csvData);
+            let tempLink = document.createElement('a');
+            let timestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
+            let fileName = `axon_charges_${timestamp}.csv`;
+            tempLink.href = csvURL;
+            tempLink.setAttribute('download', fileName);
+            tempLink.click();
+        }
+
+        function readSingleFile(e) {
+            let file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                let contents = e.target.result;
+                displayContents(contents);
+            };
+            reader.readAsText(file);
+        }
+
+        function generateNextID(existingIDs) {
+            //CHG00000739 CHG00001601 format
+            let nextID = 0;
+            let highestID = 0;
+            for (let i = 0; i < existingIDs.length; i++) {
+                let id = existingIDs[i];
+                let idNumber = parseInt(id.substring(3));
+                if (idNumber > highestID) {
+                    highestID = idNumber;
+                }
+            }
+            nextID = highestID + 1;
+            let nextIDString = nextID.toString();
+            let nextIDLength = nextIDString.length;
+            let zeros = '';
+            for (let i = 0; i < 8 - nextIDLength; i++) {
+                zeros += '0';
+            }
+            return 'CHG' + zeros + nextID;
+        }
+
+        function addRow() {
+            let newRow = document.createElement('tr');
+            let newID = generateNextID(currentIDs);
+            let newRowID = 'row' + (tableBody.children.length + 1);
+            newRow.id = newRowID;
+
+            let blankData = '<td class="whitespace-nowrap" contenteditable="true"></td>';
+            let blankRow = '';
+            // set the blank row = the number of columns in the table minus 1 for the delete button
+            for (let i = 0; i < 17; i++) {
+                blankRow += blankData;
+            }
+
+            newRow.innerHTML = `<td class="pr-5"><div class="flex justify-center space-x-2"
+                ><button class="" onclick="deleteRow('${newRowID}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/></svg></button>
+                
+                <button class="" onclick="duplicateRow('${newRowID}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M9 8v3c0 .6-.4 1-1 1H5m11 4h2c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1h-7a1 1 0 0 0-1 1v1m4 3v10c0 .6-.4 1-1 1H6a1 1 0 0 1-1-1v-7.1c0-.3 0-.5.2-.7l2.5-2.9c.2-.2.5-.3.8-.3H13c.6 0 1 .4 1 1Z"/></svg></button></div></td>
+                <td class="whitespace-nowrap">${newID}</td>
+                ${blankRow} 
+                </tr>`;
+
+            // add the blank row to the top of the table
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+
+            currentIDs.push(newID);
+            updateChargeStats();
+        }
+
+        function deleteRow(ID) {
+            let row = document.getElementById(ID);
+
+            // confirm the user wants to delete the row
+            if (!confirm('Are you sure you want to delete this charge?')) {
+                return;
+            }
+
+            row.parentNode.removeChild(row);
+            updateChargeStats();
+        }
+
+        function duplicateRow(ID) {
+            let currentRow = document.getElementById(ID);
+            let newRow = currentRow.cloneNode(true);
+
+            let newID = generateNextID(currentIDs);
+            newRow.id = 'row' + (tableBody.children.length + 1);
+            newRow.children = newRow.children[1].innerHTML = newID;
+
+            // set the delete and duplicate buttons to the new row
+            newRow.children[0].children[0].children[0].setAttribute('onclick', 'deleteRow(\'' + newRow.id + '\')');
+            newRow.children[0].children[0].children[1].setAttribute('onclick', 'duplicateRow(\'' + newRow.id + '\')');
+
+
+            // add the new row to the table under the current row
+            currentRow.parentNode.insertBefore(newRow, currentRow.nextSibling);
+            currentIDs.push(newID);
+            updateChargeStats();
+        }
+
+        function displayContents(contents) {
+            let element = document.getElementById('tableBody');
+            let html = '';
+            let rows = contents.split('\n');
+
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i].split(',');
+                if (row.length > 1) {
+                    if (i === 0) {
+                        continue;
+                    } else {
+                        html += `<tr class="border-b hover:bg-gray-100" id="row${i + 1}"><td class="pr-5"><div class="flex justify-center space-x-2"
+                            ><button class="" onclick="deleteRow('row${i + 1}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/></svg></button>
+                            
+                            <button class="" onclick="duplicateRow('row${i + 1}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M9 8v3c0 .6-.4 1-1 1H5m11 4h2c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1h-7a1 1 0 0 0-1 1v1m4 3v10c0 .6-.4 1-1 1H6a1 1 0 0 1-1-1v-7.1c0-.3 0-.5.2-.7l2.5-2.9c.2-.2.5-.3.8-.3H13c.6 0 1 .4 1 1Z"/></svg></button></div></td>`;
+                        for (let j = 0; j < row.length; j++) {
+
+                            if (j === 0) {
+                                html += `<td class="whitespace-nowrap">
+                                    ${row[j]}
+                                </td>`;
+                            } else {
+
+                                html += `<td class="whitespace-nowrap" contenteditable="true">
+                                    ${row[j]}
+                                </td>`;
+                            }
+                        }
+
+                        html += '</tr>';
+                        currentIDs.push(row[0]);
+                    }
+                }
+            }
+            element.innerHTML = html;
+            document.getElementById('tileActions').classList.remove('hidden');
+            exportButton.addEventListener('click', exportFile, false);
+
+            updateChargeStats();
+            secSelectFile.classList.add('hidden');
+            secShowFile.classList.remove('hidden');
+
+            inpSearch.addEventListener('input', function () {
+                let filter = inpSearch.value.toUpperCase();
+                let tr = element.getElementsByTagName('tr');
+                for (let i = 0; i < tr.length; i++) {
+                    let td = tr[i].getElementsByTagName('td');
+                    let found = false;
+                    for (let j = 0; j < td.length; j++) {
+                        let cell = td[j];
+                        if (cell) {
+                            if (cell.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                                found = true;
+                            }
+                        }
+                    }
+                    if (found) {
+                        tr[i].style.display = '';
+                    } else {
+                        tr[i].style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function updateChargeStats() {
+            labelStats.innerHTML = 'Count of Charges: ' + tableBody.children.length;
+        }
+
+    </script>
+</body>
+</html>
