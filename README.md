@@ -40,3 +40,5 @@ Add and edit charges from an Axon Records MCT export file.
 - [ ] Local Storage to retain the state even after the page refreshes
 - [ ] Indicators for which file is being edited, when you started, etc
   
+## Known Bugs
+- Added values when dates are edited
