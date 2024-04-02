@@ -188,7 +188,10 @@
                 }
 
                 for (let j = 1; j < cols.length; j++) {
-                    row.push(cols[j].innerText);
+                    let value = cols[j].innerText;
+                    value = value.includes(',') ? value.replace(/,/g, ' ') : value;
+                    value = value.trim();
+                    row.push(value);
                 }
                 csv.push(row.join(','));
             }

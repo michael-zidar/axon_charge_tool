@@ -1,6 +1,8 @@
 # Axon Records MCT Export Update Tool
 
-Add and edit charges from an Axon Records MCT export file. Designed to be a single HTML file that can be run locally in a web browser. 
+Add and edit charges from an Axon Records MCT export file. 
+
+>Designed to be a single HTML file that can be run locally in a web browser. 
 
 ## Basic Functionality
 
