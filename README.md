@@ -32,6 +32,7 @@ Add and edit charges from an Axon Records MCT export file.
 ## To-Do
 
 - [ ] When adding a charge, change the row color to indicate that the charge has been added or edited
+- [ ] Remove line returns, breaks, and any other characters that can casue issues with the CSV file
 - [ ] Add Axon data validation logic to each field
 - [ ] Add column sorting
 - [ ] More explicit file export names
@@ -42,3 +43,4 @@ Add and edit charges from an Axon Records MCT export file.
   
 ## Known Bugs
 - Added values when dates are edited
+- Added line returns when copied from Excel
