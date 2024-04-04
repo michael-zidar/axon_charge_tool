@@ -4,12 +4,13 @@ Add and edit charges from an Axon Records MCT export file.
 
 >Designed to be a single HTML file that can be run locally in a web browser. 
 
-## Basic Functionality
+## Basic Features
 
 - Automatically increment the MCT External ID
 - Search and filter charges by any field
 - Add, edit, duplicate, and delete charges
 - Export the updated MCT file
+- Paste charges from Excel or Google Sheets
 
 ### CRUD Operations
 
@@ -28,11 +29,9 @@ Add and edit charges from an Axon Records MCT export file.
 5. Export the updated MCT file
 6. Upload the updated MCT file to Axon Records
 
-
 ## To-Do
 
 - [ ] When adding a charge, change the row color to indicate that the charge has been added or edited
-- [ ] Remove line returns, breaks, and any other characters that can casue issues with the CSV file
 - [ ] Add Axon data validation logic to each field
 - [ ] Add column sorting
 - [ ] More explicit file export names
@@ -42,5 +41,5 @@ Add and edit charges from an Axon Records MCT export file.
 - [ ] Indicators for which file is being edited, when you started, etc
   
 ## Known Bugs
-- Added values when dates are edited
-- Added line returns when copied from Excel
+- [ ] Inability to revert changes after paste operation
+

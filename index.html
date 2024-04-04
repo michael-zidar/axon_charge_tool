@@ -345,7 +345,7 @@
                                 </td>`;
                             } else {
 
-                                html += `<td class="whitespace-nowrap" contenteditable="true">
+                                html += `<td class="whitespace-nowrap editable" contenteditable="true">
                                     ${row[j]}
                                 </td>`;
                             }
@@ -357,6 +357,21 @@
                 }
             }
             element.innerHTML = html;
+
+            tableBody = document.getElementById('tableBody');
+            tableBody.addEventListener('paste', function (e) {
+                e.preventDefault();
+                const pastedData = event.clipboardData.getData('text/plain');
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return; // No selection made, so do nothing
+                const range = selection.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode(document.createTextNode(pastedData));
+                range.collapse(false);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            });
+
             document.getElementById('tileActions').classList.remove('hidden');
             exportButton.addEventListener('click', exportFile, false);
 
