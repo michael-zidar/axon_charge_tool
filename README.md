@@ -39,6 +39,7 @@ Add and edit charges from an Axon Records MCT export file.
 - [ ] Auto date options for the date fields (today, yesterday, max-possible, etc.)
 - [ ] Local Storage to retain the state even after the page refreshes
 - [ ] Indicators for which file is being edited, when you started, etc
+- [ ] Add check step to ensure that the MCT file is the correct format
   
 ## Known Bugs
 - [ ] Inability to revert changes after paste operation
