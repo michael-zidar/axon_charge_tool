@@ -52,6 +52,20 @@
                             id="csvFileInput" accept=".csv">
                     </div>
                 </div>
+                <div class="flex items-center p-6 pt-0 hidden" id="divLoadFromLocalStorage">
+                    <div class="grid w-full max-w-sm items-center gap-1.5 cursor-pointer">
+                        <label for="btnLoadFromLocalStorage"
+                            class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer">Load
+                            from Browser Storage</label>
+                        <button id="btnLoadFromLocalStorage"
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 bg-black text-white px-3 py-2">Load
+                            Last File Available</button>
+                            <!-- text aligned to the left that says remove stored data -->
+                        <button id="btnClearLocalStorage" onclick="reset()"
+                            class="inline-flex items-center justify-end whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90">Remove
+                            Stored Data</button>
+                    </div>
+                </div>
 
                 <div class="flex items-center p-6 pt-0"></div>
             </div>
@@ -73,9 +87,12 @@
                         Export
                     </button>
                 </div>
-                <div>
+                <div class="flex items-center space-x-2">
                     <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                         id="labelStats">Count of Charges</p>
+                        <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Added: <span id="spanAdded"></span></p>
+                        <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Edited: <span id="spanEdited"></span></p>
+                        <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Deleted: <span id="spanDeleted"></span></p>
                 </div>
                 <div class="grid w-full max-w-sm items-center gap-1.5">
                     <input type="text"
@@ -87,7 +104,7 @@
 
         <div id="csv" class="pb-20">
             <div class="overflow-auto">
-                <table class="min-w-full text-sm table-auto">
+                <table class="min-w-full text-sm table-auto" id="dataTable">
                     <thead class="[&_tr]:border-b">
                         <tr class="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
                             <th
@@ -157,17 +174,49 @@
     </div>
 
     <script>
+        const mode = 'development';
         const secSelectFile = document.getElementById('secSelectFile');
         const secShowFile = document.getElementById('secShowFile');
         const csvFileInput = document.getElementById('csvFileInput');
         csvFileInput.addEventListener('change', readSingleFile, false);
-
+        const btnLoadFromLocalStorage = document.getElementById('btnLoadFromLocalStorage');
+        const divLoadFromLocalStorage = document.getElementById('divLoadFromLocalStorage');
         const inpSearch = document.getElementById('inpSearch');
-
         let currentIDs = [];
         const exportButton = document.getElementById('exportButton');
         const labelStats = document.getElementById('labelStats');
-        let fileName = 'export.csv';
+        let fileName = 'MCT_Export.csv';
+        const spanAdded = document.getElementById('spanAdded');
+        const spanEdited = document.getElementById('spanEdited');
+        const spanDeleted = document.getElementById('spanDeleted');
+
+        let addedCount = 0;
+        let editedCount = 0;
+        let deletedCount = 0;
+        let editedRows = [];
+
+        const fileHeaders = ['externalId', 'section', 'description', 'shortDescription', 'nibrsUCRCodes', 'source', 'validFromTime', 'validToTime', 'severity', 'code', 'summaryCode', 'cjisCode', 'hierarchyNumber', 'UCR', 'offenseCategories', 'chargeType', 'stateOffenseCode', 'NCICOffenseCodes'];
+
+
+        function cacheCurrentStateInLocalStorage() {
+            let tableBody = document.getElementById('tableBody');
+            let rows = tableBody.children;
+            let data = [];
+            //  add the headers to the data array
+            data.push(fileHeaders);
+            for (let i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                let rowData = [];
+                for (let j = 1; j < row.children.length; j++) {
+                    let cell = row.children[j];
+                    rowData.push(cell.innerText);
+                }
+                data.push(rowData);
+            }
+            localStorage.setItem('chargeData', JSON.stringify(data));
+            // add the metadata to the local storage
+            localStorage.setItem('chargeDataMeta', JSON.stringify({ 'count': rows.length, 'lastUpdated': new Date(), 'fileName': fileName }));
+        }
 
         function exportFile() {
             let rows = document.querySelectorAll('table tr');
@@ -214,6 +263,7 @@
             let reader = new FileReader();
             reader.onload = function (e) {
                 let contents = e.target.result;
+                console.log(contents);
                 displayContents(contents);
             };
             reader.readAsText(file);
@@ -242,6 +292,7 @@
 
         function addRow() {
             let newRow = document.createElement('tr');
+            newRow.classList.add('border-b', 'hover:bg-gray-100', 'datarow');
             let newID = generateNextID(currentIDs);
             let newRowID = 'row' + (tableBody.children.length + 1);
             newRow.id = newRowID;
@@ -253,10 +304,11 @@
                 blankRow += blankData;
             }
 
-            newRow.innerHTML = `<td class="pr-5"><div class="flex justify-center space-x-2"
+            newRow.innerHTML = `<td class="pr-5"><div class="flex justify-center space-x-2 datarow"
                 ><button class="" onclick="deleteRow('${newRowID}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/></svg></button>
                 <button class="" onclick="duplicateRow('${newRowID}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M9 8v3c0 .6-.4 1-1 1H5m11 4h2c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1h-7a1 1 0 0 0-1 1v1m4 3v10c0 .6-.4 1-1 1H6a1 1 0 0 1-1-1v-7.1c0-.3 0-.5.2-.7l2.5-2.9c.2-.2.5-.3.8-.3H13c.6 0 1 .4 1 1Z"/></svg></button>
-                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 bg-cyan-400 text-white">New</div> 
+                <div class="row_badges min-w-20">
+                <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 bg-zinc-400 text-white">New</div></div>
                 </div></td>
                 <td class="whitespace-nowrap ">${newID}</td>
                 ${blankRow} 
@@ -264,7 +316,7 @@
 
             // add the blank row to the top of the table
             tableBody.insertBefore(newRow, tableBody.firstChild);
-
+            addedCount++;
             currentIDs.push(newID);
             updateChargeStats();
         }
@@ -272,10 +324,11 @@
         function deleteRow(ID) {
             let row = document.getElementById(ID);
 
-            // confirm the user wants to delete the row
             if (!confirm('Are you sure you want to delete this charge?')) {
                 return;
             }
+
+            deletedCount++;
 
             row.parentNode.removeChild(row);
             updateChargeStats();
@@ -294,12 +347,13 @@
             newRow.children[0].children[0].children[1].setAttribute('onclick', 'duplicateRow(\'' + newRow.id + '\')');
 
             // add the badge next to the delete and duplicate buttons in the first cell
-            newRow.children[0].children[0].children[2].innerHTML = '<div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 bg-cyan-400 text-white">New</div> ';
+            newRow.children[0].children[0].children[2].innerHTML = '<div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 bg-zinc-800 text-white">Dup/New</div>';
 
 
             // add the new row to the table under the current row
             currentRow.parentNode.insertBefore(newRow, currentRow.nextSibling);
             currentIDs.push(newID);
+            addedCount++;
             updateChargeStats();
         }
 
@@ -337,12 +391,11 @@
                     if (i === 0) {
                         continue;
                     } else {
-                        html += `<tr class="border-b hover:bg-gray-100" id="row${i + 1}"><td class="pr-5"><div class="flex justify-center space-x-2"
+                        html += `<tr class="border-b hover:bg-gray-100 datarow" id="row${i + 1}"><td class="pr-5"><div class="flex justify-center space-x-2"
                             ><button class=""  title="delete"  onclick="deleteRow('row${i + 1}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/></svg></button>
                             
                             <button class="" title="duplicate" onclick="duplicateRow('row${i + 1}')"><svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M9 8v3c0 .6-.4 1-1 1H5m11 4h2c.6 0 1-.4 1-1V5c0-.6-.4-1-1-1h-7a1 1 0 0 0-1 1v1m4 3v10c0 .6-.4 1-1 1H6a1 1 0 0 1-1-1v-7.1c0-.3 0-.5.2-.7l2.5-2.9c.2-.2.5-.3.8-.3H13c.6 0 1 .4 1 1Z"/></svg></button>
-
-                            <div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"></div> 
+                            <div class="row_badges min-w-20"></div>
                             </div></td>`;
                         for (let j = 0; j < row.length; j++) {
 
@@ -379,6 +432,30 @@
                 selection.addRange(range);
             });
 
+            const editableCells = document.querySelectorAll('#dataTable td[contenteditable="true"]');
+
+            // Attach an event listener to each cell
+            editableCells.forEach(cell => {
+                cell.addEventListener('input', (event) => {
+                    const row = event.target.closest('tr');
+
+                    row_data = [];
+                    row_data.push(row.children[1].innerText);
+                    for (let i = 2; i < row.children.length; i++) {
+                        row_data.push(row.children[i].innerText);
+                    }
+                    
+                    if (!editedRows.includes(row_data[0])) {
+                        editedRows.push(row_data[0]);
+                        editedCount++;
+                    }
+
+                    updateChargeStats();
+
+                    row.children[0].children[0].children[2].innerHTML = '<div class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 bg-yellow-400 text-white">Edited</div> ';
+                });
+            });
+
             document.getElementById('tileActions').classList.remove('hidden');
             exportButton.addEventListener('click', exportFile, false);
 
@@ -389,16 +466,71 @@
             inpSearch.addEventListener('input', function () {
                 searchTable();
             });
+            cacheCurrentStateInLocalStorage();
         }
 
         function updateChargeStats() {
             labelStats.innerHTML = 'Count of Charges: ' + tableBody.children.length;
+            spanAdded.innerHTML = addedCount;
+            spanEdited.innerHTML = editedCount;
+            spanDeleted.innerHTML = deletedCount;
         }
+
+        function localStorageAvailable() {
+            try {
+                const x = '__storage_test__';
+                localStorage.setItem(x, x);
+                localStorage.removeItem(x);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('chargeData');
+            localStorage.removeItem('chargeDataMeta');
+            localStorage.removeItem('editedRows');
+        }
+
+        function reset() {
+            clearLocalStorage();
+            location.reload();
+        }
+
+        function localChargesToCSV(chargesFromLocalStorage) {
+            let csv = [];
+            for (let i = 0; i < chargesFromLocalStorage.length; i++) {
+                let row = chargesFromLocalStorage[i];
+                csv.push(row.join(','));
+            }
+            return csv.join('\n');
+        }
+
+        if (localStorageAvailable() && localStorage.getItem('chargeData')) {
+            divLoadFromLocalStorage.classList.remove('hidden');
+            btnLoadFromLocalStorage.addEventListener('click', function () {
+                if (localStorage.getItem('chargeData')) {
+                    let cachedData = localStorage.getItem('chargeData') ? JSON.parse(localStorage.getItem('chargeData')) : [];
+                    displayContents(localChargesToCSV(cachedData));
+                }
+            });
+        }
+
+        window.onbeforeunload = function () {
+            if (mode === 'development') {
+                return;
+            }
+            if (secShowFile.classList.contains('hidden')) {
+                return;
+            }
+            let tableBody = document.getElementById('tableBody');
+            if (tableBody.children.length > 0) {
+                return 'You have unsaved changes. Are you sure you want to leave?';
+            }
+        };
 
     </script>
 </body>
 
 </html>
-
-
-
