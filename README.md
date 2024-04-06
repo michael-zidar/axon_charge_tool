@@ -4,6 +4,8 @@ Add and edit charges from an Axon Records MCT export file.
 
 >Designed to be a single HTML file that can be run locally in a web browser. 
 
+[View the live demo](https://www.michaelzidar.com/static/demos/axon_mct/index.html)
+
 ## Basic Features
 
 - Automatically increment the MCT External ID
@@ -41,6 +43,7 @@ Add and edit charges from an Axon Records MCT export file.
 - [ ] Auto date options for the date fields (today, yesterday, max-possible, etc.)
 - [x] Local Storage to retain the state even after the page refreshes
 - [ ] Add check step to ensure that the MCT file is the correct format
+- [ ] Add start over button to clear all changes and start fresh
   
 ## Known Bugs
 - [ ] Inability to revert changes after paste operation
