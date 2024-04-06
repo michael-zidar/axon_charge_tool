@@ -19,6 +19,9 @@
             <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
                 <div class="flex lg:flex-1">
                     <a href="#" class="-m-1.5 p-1.5">Axon MCT Update Tool</a>
+                    <button onclick="reset()"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 ms-20 bg-red-100 px-4 py-1 hidden" id="btnReset">
+                        Reset All</button>
                 </div>
 
                 <div class="flex lg:flex-1 justify-end">
@@ -196,6 +199,8 @@
         const spanAdded = document.getElementById('spanAdded');
         const spanEdited = document.getElementById('spanEdited');
         const spanDeleted = document.getElementById('spanDeleted');
+        const btnReset = document.getElementById('btnReset');
+        btnReset.addEventListener('click', reset, false);
 
         let addedCount = 0;
         let editedCount = 0;
@@ -476,6 +481,9 @@
             inpSearch.addEventListener('input', function () {
                 searchTable();
             });
+
+            btnReset.classList.remove('hidden');
+
             cacheCurrentStateInLocalStorage();
         }
 
