@@ -29,6 +29,8 @@ Add and edit charges from an Axon Records MCT export file.
 5. Export the updated MCT file
 6. Upload the updated MCT file to Axon Records
 
+![Screenshot of the Axon Records MCT Export Update Tool](img/image.png) 
+
 ## To-Do
 
 - [x] When adding a charge, change the row color to indicate that the charge has been added or edited

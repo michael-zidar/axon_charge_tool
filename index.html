@@ -60,7 +60,7 @@
                         <button id="btnLoadFromLocalStorage"
                             class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 bg-black text-white px-3 py-2">Load
                             Last File Available</button>
-                            <!-- text aligned to the left that says remove stored data -->
+                        <!-- text aligned to the left that says remove stored data -->
                         <button id="btnClearLocalStorage" onclick="reset()"
                             class="inline-flex items-center justify-end whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90">Remove
                             Stored Data</button>
@@ -88,11 +88,17 @@
                     </button>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pe-3"
                         id="labelStats">Count of Charges</p>
-                        <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Added: <span id="spanAdded"></span></p>
-                        <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Edited: <span id="spanEdited"></span></p>
-                        <p class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Deleted: <span id="spanDeleted"></span></p>
+                    <p
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pe-3">
+                        Added: <span id="spanAdded"></span></p>
+                    <p
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 pe-3">
+                        Edited: <span id="spanEdited"></span></p>
+                    <p
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        Deleted: <span id="spanDeleted"></span></p>
                 </div>
                 <div class="grid w-full max-w-sm items-center gap-1.5">
                     <input type="text"
@@ -186,6 +192,7 @@
         const exportButton = document.getElementById('exportButton');
         const labelStats = document.getElementById('labelStats');
         let fileName = 'MCT_Export.csv';
+        let orgFileName = '';
         const spanAdded = document.getElementById('spanAdded');
         const spanEdited = document.getElementById('spanEdited');
         const spanDeleted = document.getElementById('spanDeleted');
@@ -214,11 +221,14 @@
                 data.push(rowData);
             }
             localStorage.setItem('chargeData', JSON.stringify(data));
-            // add the metadata to the local storage
-            localStorage.setItem('chargeDataMeta', JSON.stringify({ 'count': rows.length, 'lastUpdated': new Date(), 'fileName': fileName }));
+
+            const storedFileName = localStorage.getItem('chargeDataMeta') ? JSON.parse(localStorage.getItem('chargeDataMeta')).fileName : orgFileName;
+
+            localStorage.setItem('chargeDataMeta', JSON.stringify({ 'count': rows.length, 'lastUpdated': new Date(), 'fileName': storedFileName }));
         }
 
         function exportFile() {
+            cacheCurrentStateInLocalStorage();
             let rows = document.querySelectorAll('table tr');
             let csv = [];
 
@@ -257,13 +267,13 @@
         function readSingleFile(e) {
             let file = e.target.files[0];
             fileName = file.name;
+            orgFileName = fileName;
             if (!file) {
                 return;
             }
             let reader = new FileReader();
             reader.onload = function (e) {
                 let contents = e.target.result;
-                console.log(contents);
                 displayContents(contents);
             };
             reader.readAsText(file);
@@ -444,7 +454,7 @@
                     for (let i = 2; i < row.children.length; i++) {
                         row_data.push(row.children[i].innerText);
                     }
-                    
+
                     if (!editedRows.includes(row_data[0])) {
                         editedRows.push(row_data[0]);
                         editedCount++;
