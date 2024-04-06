@@ -31,14 +31,13 @@ Add and edit charges from an Axon Records MCT export file.
 
 ## To-Do
 
-- [ ] When adding a charge, change the row color to indicate that the charge has been added or edited
+- [x] When adding a charge, change the row color to indicate that the charge has been added or edited
 - [ ] Add Axon data validation logic to each field
 - [ ] Add column sorting
-- [ ] More explicit file export names
+- [x] More explicit file export names
 - [ ] Add dropdowns for unique values like NIBRS codes, Offense Categories, etc.
 - [ ] Auto date options for the date fields (today, yesterday, max-possible, etc.)
-- [ ] Local Storage to retain the state even after the page refreshes
-- [ ] Indicators for which file is being edited, when you started, etc
+- [x] Local Storage to retain the state even after the page refreshes
 - [ ] Add check step to ensure that the MCT file is the correct format
   
 ## Known Bugs
