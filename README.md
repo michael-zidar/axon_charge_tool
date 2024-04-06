@@ -12,24 +12,24 @@ Add and edit charges from an Axon Records MCT export file.
 - Export the updated MCT file
 - Paste charges from Excel or Google Sheets
 
-### CRUD Operations
+### Upload File View
+![Screenshot of the Axon Records MCT Export Update Tool upload view](img/upload_view.png)
 
-- Duplicate a charge in an existing MCT and edit the duplicated charge
-- Add charges to an existing MCT export file
-- Edit charges in an existing MCT export file
-- Remove charges from an existing MCT export file
+### Edit File View
+![Screenshot of the Axon Records MCT Export Update Tool edit view](img/edit_view.png) 
+
 
 
 ## How to Use
 
 1. Download your existing MCT file from the Axon Records interface
-2. Open the index.html file from the repo in you web browser
-3. Select the MCT file you downloaded
+2. Open the `index.html` file from the repo in you web browser (Edge, Chrome, Firefox, Safari, etc.)
+3. Select the MCT file you downloaded from Axon Records
+   1. If you already uploaded an MCT file, the tool will remember the last file you uploaded
 4. Create, update, duplicate and edit, or delete charges
 5. Export the updated MCT file
 6. Upload the updated MCT file to Axon Records
 
-![Screenshot of the Axon Records MCT Export Update Tool](img/image.png) 
 
 ## To-Do
 
@@ -44,4 +44,3 @@ Add and edit charges from an Axon Records MCT export file.
   
 ## Known Bugs
 - [ ] Inability to revert changes after paste operation
-
