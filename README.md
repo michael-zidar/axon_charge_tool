@@ -4,7 +4,7 @@ Add and edit charges from an Axon Records MCT export file.
 
 >Designed to be a single HTML file that can be run locally in a web browser. 
 
-[View the live demo](https://www.michaelzidar.com/static/demos/axon_mct/index.html){:target="_blank"}
+[View the live demo](https://www.michaelzidar.com/static/demos/axon_mct/index.html)
 
 ## Basic Features
 
@@ -25,11 +25,11 @@ Add and edit charges from an Axon Records MCT export file.
 ## How to Use
 
 1. Download your existing MCT file from the Axon Records interface
-2. Open the `index.html` file from the repo in you web browser (Edge, Chrome, Firefox, Safari, etc.) 
-   1. You could also use the live demo [here](https://www.michaelzidar.com/static/demos/axon_mct/index.html){:target="_blank"}
+2. Open the `index.html` file from the repo in your web browser (Edge, Chrome, Firefox, Safari, etc.) 
+   1. You could also use the live demo [here](https://www.michaelzidar.com/static/demos/axon_mct/index.html)
 3. Select the MCT file you downloaded from Axon Records
-   1. If you already uploaded an MCT file, the tool will remember the last file you uploaded
-4. Create, update, duplicate and edit, or delete charges
+   1. If you have already uploaded an MCT file, the tool will remember the last file you uploaded
+4. Create, update, duplicate edit, or delete charges
 5. Export the updated MCT file
 6. Upload the updated MCT file to Axon Records
 
@@ -37,13 +37,14 @@ Add and edit charges from an Axon Records MCT export file.
 ## To-Do
 
 - [x] When adding a charge, change the row color to indicate that the charge has been added or edited
+- [ ] Fix `Cntl` + `z` issues
 - [ ] Add Axon data validation logic to each field
 - [ ] Add column sorting
 - [x] More explicit file export names
 - [ ] Add dropdowns for unique values like NIBRS codes, Offense Categories, etc.
 - [ ] Auto date options for the date fields (today, yesterday, max-possible, etc.)
 - [x] Local Storage to retain the state even after the page refreshes
-- [ ] Add check step to ensure that the MCT file is the correct format
+- [ ] Add a check step to ensure that the MCT file is in the correct format
 - [ ] Add start over button to clear all changes and start fresh
   
 ## Known Bugs
